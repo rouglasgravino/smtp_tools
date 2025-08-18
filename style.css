@@ -32,13 +32,14 @@ body {
     max-width: 550px;
 }
 
-/* --- Título (Logo) --- */
-.main-title {
-    font-size: 2.25rem;
-    font-weight: 700;
-    color: #0c2b5b;
+/* --- Cabeçalho e Logo --- */
+.card-header {
     text-align: center;
     margin-bottom: 2rem;
+}
+.logo-img {
+    height: 38px;
+    width: auto;
 }
 
 /* --- Aviso de Simulação (Amarelo) --- */
@@ -207,7 +208,6 @@ body {
 @media (max-width: 640px) {
     .main-content { padding: 1rem; align-items: flex-start; }
     .card { padding: 1.5rem; }
-    .main-title { font-size: 1.75rem; }
     .presets { flex-direction: column; align-items: stretch; }
     .form-row { grid-template-columns: 1fr; gap: 0; }
     .form-row .form-group:first-child { margin-bottom: 1.5rem; }

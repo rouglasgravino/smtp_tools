@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Dicionário de Traduções ---
     const translations = {
         pt: {
-            title: "SMTP Test - Ferramenta de Teste de Conexão Rápida",
+            title: "SMTP Test - Ferramenta de Teste de Conexão",
             description: "Verifique suas configurações de servidor SMTP de forma rápida e fácil. Teste conexões, envie e-mails de teste e garanta que seu serviço está funcionando corretamente.",
             disclaimerTitle: "Atenção:",
             disclaimerText: "Esta é uma ferramenta de demonstração de interface (Frontend). Nenhum e-mail real será enviado.",
@@ -29,10 +29,37 @@ document.addEventListener('DOMContentLoaded', () => {
             successMessage: "Simulação bem-sucedida! Os dados para conexão com {server}:{port} são válidos.",
             successWithEmail: "Simulação bem-sucedida! Em um ambiente real, um e-mail de teste para {destination} teria sido enviado.",
             errorMessage: "Falha na simulação! Verifique as credenciais, porta e se o host permite conexões.",
-            emailSubject: "Teste SMTP - smtp.rouglas.com",
-            emailBody: "Bom trabalho, Funcionando!\n\nsmtp.rouglas.com\ndivertido e informativo"
         },
-        // Adicionar outras traduções aqui (en, es, it)
+        en: {
+            title: "SMTP Test - Connection Test Tool",
+            description: "Check your SMTP server settings quickly and easily. Test connections, send test emails, and ensure your service is working correctly.",
+            disclaimerTitle: "Attention:",
+            disclaimerText: "This is a user interface (Frontend) demonstration tool. No real emails will be sent.",
+            subtitle: "Check your SMTP server settings. Test connections to ensure your email service is configured correctly.",
+            labelServer: "SMTP Server",
+            labelSecurity: "Security",
+            optionStarttls: "STARTTLS",
+            optionSslTls: "SSL/TLS",
+            optionNone: "None",
+            labelPort: "Port",
+            placeholderPort: "Ex: 587",
+            labelUser: "User / Email",
+            labelPassword: "Password",
+            placeholderPassword: "••••••••••••",
+            sendTestEmail: "Send test email",
+            labelDestination: "Destination Email",
+            placeholderDestination: "to.where@send.com",
+            testButton: "Test Connection",
+            checkingButton: "Checking...",
+            privacyTooltip: "Your information is used only for this test and is not saved on our servers.",
+            fillAllFields: "Please fill in all required fields.",
+            testingConnection: "Simulating connection... Please wait.",
+            successMessage: "Simulation successful! The connection data for {server}:{port} is valid.",
+            successWithEmail: "Simulation successful! In a real environment, a test email to {destination} would have been sent.",
+            errorMessage: "Simulation failed! Check credentials, port, and if the host allows connections.",
+        },
+        es: { /* Traduções para Espanhol */ },
+        it: { /* Traduções para Italiano */ }
     };
 
     // --- Seleção de Elementos ---
@@ -54,7 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Funções ---
     const setLanguage = (lang) => {
-        if (!translations[lang]) lang = 'pt'; // Fallback para PT
+        if (!translations[lang] || Object.keys(translations[lang]).length === 0) lang = 'pt'; // Fallback para PT
         currentLang = lang;
         localStorage.setItem('preferredLanguage', lang);
 
@@ -64,7 +91,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         document.querySelectorAll('[data-translate-key]').forEach(el => {
             const key = el.getAttribute('data-translate-key');
-            if (translations[lang] && translations[lang][key]) {
+            const translationExists = translations[lang] && translations[lang][key];
+            if (translationExists) {
                 if (el.tagName === 'OPTION') {
                     el.textContent = translations[lang][key];
                 } else if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
@@ -78,20 +106,38 @@ document.addEventListener('DOMContentLoaded', () => {
         langButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.lang === lang));
     };
 
-    const toggleDestinationEmail = () => { /* ... (mesma função anterior) ... */ };
-    const updatePortBasedOnSecurity = () => { /* ... (mesma função anterior) ... */ };
-    function showResult(message, type) { /* ... (mesma função anterior) ... */ }
+    const toggleDestinationEmail = () => {
+        if (sendEmailCheckbox.checked) {
+            destinationEmailGroup.classList.add('visible');
+            destinationEmailInput.required = true;
+        } else {
+            destinationEmailGroup.classList.remove('visible');
+            destinationEmailInput.required = false;
+            destinationEmailInput.value = '';
+        }
+    };
+    
+    const updatePortBasedOnSecurity = () => {
+        const security = securitySelect.value;
+        if (security === 'ssl') portInput.value = 465;
+        else if (security === 'starttls') portInput.value = 587;
+        else if (security === 'none') portInput.value = 25;
+    };
+    
+    function showResult(message, type) {
+        resultMessage.textContent = message;
+        resultMessage.className = 'status-message';
+        resultMessage.classList.add(`status-${type}`);
+    }
 
     // --- Lógica do Aviso Amarelo ---
     if (localStorage.getItem('disclaimerDismissed') === 'true') {
         disclaimerBox.style.display = 'none';
     }
-
     closeDisclaimerBtn.addEventListener('click', () => {
         disclaimerBox.style.display = 'none';
         localStorage.setItem('disclaimerDismissed', 'true');
     });
-
 
     // --- Inicialização ---
     if (currentYearSpan) currentYearSpan.textContent = new Date().getFullYear();
@@ -103,39 +149,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Event Listeners ---
     langButtons.forEach(btn => btn.addEventListener('click', () => setLanguage(btn.dataset.lang)));
+    
     sendEmailCheckbox.addEventListener('change', toggleDestinationEmail);
+    
     securitySelect.addEventListener('change', updatePortBasedOnSecurity);
-    document.getElementById('btn-google').addEventListener('click', () => { /* ... */ });
-    document.getElementById('btn-microsoft').addEventListener('click', () => { /* ... */ });
-    form.addEventListener('submit', (event) => { /* ... (mesma função anterior) ... */ });
-
-    // Re-incluindo funções que foram abreviadas para clareza
-    function toggleDestinationEmail() {
-        if (sendEmailCheckbox.checked) {
-            destinationEmailGroup.classList.add('visible');
-            destinationEmailInput.required = true;
-        } else {
-            destinationEmailGroup.classList.remove('visible');
-            destinationEmailInput.required = false;
-            destinationEmailInput.value = '';
-        }
-    }
-    function updatePortBasedOnSecurity() {
-        const security = securitySelect.value;
-        if (security === 'ssl') portInput.value = 465;
-        else if (security === 'starttls') portInput.value = 587;
-        else if (security === 'none') portInput.value = 25;
-    }
+    
     document.getElementById('btn-google').addEventListener('click', () => {
         serverInput.value = 'smtp.gmail.com';
         securitySelect.value = 'starttls';
         updatePortBasedOnSecurity();
     });
+    
     document.getElementById('btn-microsoft').addEventListener('click', () => {
-        serverInput.value = 'smtp.office365.com';
+        serverInput.value = 'smtp.office356.com';
         securitySelect.value = 'starttls';
         updatePortBasedOnSecurity();
     });
+    
     form.addEventListener('submit', (event) => {
         event.preventDefault();
         const formData = {
@@ -154,10 +184,13 @@ document.addEventListener('DOMContentLoaded', () => {
         showResult(translations[currentLang].testingConnection, 'testing');
         testBtn.disabled = true;
         testBtn.textContent = translations[currentLang].checkingButton;
+        
         setTimeout(() => {
-            const isSuccess = Math.random() > 0.2;
+            const isSuccess = Math.random() > 0.2; // 80% chance de sucesso
             if (isSuccess) {
-                let message = formData.sendTestEmail ? translations[currentLang].successWithEmail.replace('{destination}', formData.destinationEmail) : translations[currentLang].successMessage.replace('{server}', formData.server).replace('{port}', formData.port);
+                let message = formData.sendTestEmail 
+                    ? translations[currentLang].successWithEmail.replace('{destination}', formData.destinationEmail) 
+                    : translations[currentLang].successMessage.replace('{server}', formData.server).replace('{port}', formData.port);
                 showResult(message, 'success');
             } else {
                 showResult(translations[currentLang].errorMessage, 'error');
@@ -166,9 +199,4 @@ document.addEventListener('DOMContentLoaded', () => {
             testBtn.textContent = translations[currentLang].testButton;
         }, 2000);
     });
-    function showResult(message, type) {
-        resultMessage.textContent = message;
-        resultMessage.className = 'status-message';
-        resultMessage.classList.add(`status-${type}`);
-    }
 });
