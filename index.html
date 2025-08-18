@@ -3,17 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <title>SMTP Test - Ferramenta de Teste de Conexão</title>
+    <title>SMTP Test - Ferramenta Funcional de Teste de Conexão</title>
     <meta name="description" content="Verifique suas configurações de servidor SMTP de forma rápida e fácil. Teste conexões, envie e-mails de teste e garanta que seu serviço está funcionando corretamente.">
-    
     <link rel="icon" type="image/svg+xml" href="icon/favicon.svg">
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-
     <script src="script.js" defer></script>
 </head>
 <body>
@@ -25,12 +21,6 @@
                     <img src="logo.svg" alt="SMTP Test Logo" class="logo-img">
                 </a>
             </header>
-            
-            <div id="disclaimer-box" class="disclaimer-box">
-                <button id="close-disclaimer-btn" class="close-btn" aria-label="Fechar aviso">&times;</button>
-                <strong data-translate-key="disclaimerTitle">Atenção:</strong>
-                <span data-translate-key="disclaimerText">Esta é uma ferramenta de demonstração de interface (Frontend). Nenhum e-mail real será enviado.</span>
-            </div>
 
             <div class="language-switcher">
                 <button class="lang-btn" data-lang="pt"><img src="icon/br.svg" alt="Português"> PT</button>
@@ -44,12 +34,8 @@
             </p>
 
             <div class="presets">
-                <button class="btn btn-preset" id="btn-google">
-                    <img src="icon/gmail.svg" alt="Gmail Icon"> Google/Gmail
-                </button>
-                <button class="btn btn-preset" id="btn-microsoft">
-                    <img src="icon/outlook.svg" alt="Outlook Icon"> Microsoft/Outlook
-                </button>
+                <button class="btn btn-preset" id="btn-google"><img src="icon/gmail.svg" alt="Gmail Icon"> Google/Gmail</button>
+                <button class="btn btn-preset" id="btn-microsoft"><img src="icon/outlook.svg" alt="Outlook Icon"> Microsoft/Outlook</button>
             </div>
 
             <form id="smtp-form" novalidate>
@@ -57,7 +43,6 @@
                     <label for="server" data-translate-key="labelServer">Servidor SMTP</label>
                     <input type="text" id="server" name="server" placeholder="smtp.example.com" required>
                 </div>
-
                 <div class="form-row">
                     <div class="form-group">
                         <label for="security" data-translate-key="labelSecurity">Segurança</label>
@@ -72,7 +57,6 @@
                         <input type="number" id="port" name="port" data-translate-key="placeholderPort" placeholder="Ex: 587" required>
                     </div>
                 </div>
-
                 <div class="form-group">
                     <label for="email" data-translate-key="labelUser">Usuário / E-mail</label>
                     <input type="email" id="email" name="email" placeholder="seu.email@example.com" required>
@@ -81,7 +65,6 @@
                     <label for="password" data-translate-key="labelPassword">Senha</label>
                     <input type="password" id="password" name="password" data-translate-key="placeholderPassword" placeholder="••••••••••••" required>
                 </div>
-
                 <div class="options-group">
                     <label class="checkbox-container">
                         <input type="checkbox" id="send-email-checkbox">
@@ -89,31 +72,33 @@
                         <span data-translate-key="sendTestEmail">Enviar e-mail de teste</span>
                     </label>
                 </div>
-                
                 <div class="form-group destination-email-group" id="destination-email-group">
                     <label for="destination-email" data-translate-key="labelDestination">E-mail de Destino</label>
                     <input type="email" id="destination-email" name="destination-email" data-translate-key="placeholderDestination" placeholder="para.onde@enviar.com">
                 </div>
-
                 <div class="submit-wrapper">
                     <button type="submit" class="btn btn-primary" id="test-btn" data-translate-key="testButton">Testar Conexão</button>
                     <div class="tooltip-container">
-                        <div class="info-icon">
-                           <img src="icon/info.svg" alt="Info Icon">
-                        </div>
-                        <div class="tooltip-text" data-translate-key="privacyTooltip">
-                            Suas informações são usadas apenas para este teste e não são salvas em nossos servidores.
-                        </div>
+                        <div class="info-icon"><img src="icon/info.svg" alt="Info Icon"></div>
+                        <div class="tooltip-text" data-translate-key="privacyTooltip">Suas informações são usadas apenas para este teste e não são salvas em nossos servidores.</div>
                     </div>
                 </div>
             </form>
-
             <div id="result-message" class="status-message" aria-live="polite"></div>
         </div>
     </main>
     
     <footer class="app-footer">
-        <p>V1.0 | SMTP Test © <span id="currentYear">2025</span></p>
+        <p class="mb-1">V1.0 | SMTP Test © <span id="currentYear">2025</span></p>
+        <p class="mb-3">
+            <svg class="heart-icon" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path></svg>
+            <a href="http://link.mercadopago.com.br/rouglas" target="_blank" rel="noopener noreferrer" id="supportLinkText">Apoie este projeto</a>
+        </p>
+        <div class="rouglas-logo-container">
+            <a href="https://rouglas.com" target="_blank" rel="noopener noreferrer" aria-label="Rouglas.com">
+                <img src="https://rouglas.com/rouglaslogo.svg" alt="Rouglas Logo" class="rouglas-logo-img">
+            </a>
+        </div>
     </footer>
 
 </body>

@@ -3,63 +3,20 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Dicionário de Traduções ---
     const translations = {
         pt: {
-            title: "SMTP Test - Ferramenta de Teste de Conexão",
-            description: "Verifique suas configurações de servidor SMTP de forma rápida e fácil. Teste conexões, envie e-mails de teste e garanta que seu serviço está funcionando corretamente.",
-            disclaimerTitle: "Atenção:",
-            disclaimerText: "Esta é uma ferramenta de demonstração de interface (Frontend). Nenhum e-mail real será enviado.",
-            subtitle: "Verifique suas configurações de servidor SMTP. Teste conexões para garantir que seu serviço de e-mail está configurado corretamente.",
-            labelServer: "Servidor SMTP",
-            labelSecurity: "Segurança",
-            optionStarttls: "STARTTLS",
-            optionSslTls: "SSL/TLS",
-            optionNone: "Nenhuma",
-            labelPort: "Porta",
-            placeholderPort: "Ex: 587",
-            labelUser: "Usuário / E-mail",
-            labelPassword: "Senha",
-            placeholderPassword: "••••••••••••",
-            sendTestEmail: "Enviar e-mail de teste",
-            labelDestination: "E-mail de Destino",
-            placeholderDestination: "para.onde@enviar.com",
-            testButton: "Testar Conexão",
-            checkingButton: "Verificando...",
-            privacyTooltip: "Suas informações são usadas apenas para este teste e não são salvas em nossos servidores.",
-            fillAllFields: "Por favor, preencha todos os campos obrigatórios.",
-            testingConnection: "Simulando conexão... Por favor, aguarde.",
-            successMessage: "Simulação bem-sucedida! Os dados para conexão com {server}:{port} são válidos.",
-            successWithEmail: "Simulação bem-sucedida! Em um ambiente real, um e-mail de teste para {destination} teria sido enviado.",
-            errorMessage: "Falha na simulação! Verifique as credenciais, porta e se o host permite conexões.",
+            // ... (traduções completas)
+            successMessage: "Sucesso! A conexão com {server}:{port} foi estabelecida.",
+            successWithEmail: "Sucesso! E-mail de teste enviado para {destination}.",
+            errorMessage: "Falha na conexão: {error}",
+            testingConnection: "Testando conexão real...",
         },
         en: {
-            title: "SMTP Test - Connection Test Tool",
-            description: "Check your SMTP server settings quickly and easily. Test connections, send test emails, and ensure your service is working correctly.",
-            disclaimerTitle: "Attention:",
-            disclaimerText: "This is a user interface (Frontend) demonstration tool. No real emails will be sent.",
-            subtitle: "Check your SMTP server settings. Test connections to ensure your email service is configured correctly.",
-            labelServer: "SMTP Server",
-            labelSecurity: "Security",
-            optionStarttls: "STARTTLS",
-            optionSslTls: "SSL/TLS",
-            optionNone: "None",
-            labelPort: "Port",
-            placeholderPort: "Ex: 587",
-            labelUser: "User / Email",
-            labelPassword: "Password",
-            placeholderPassword: "••••••••••••",
-            sendTestEmail: "Send test email",
-            labelDestination: "Destination Email",
-            placeholderDestination: "to.where@send.com",
-            testButton: "Test Connection",
-            checkingButton: "Checking...",
-            privacyTooltip: "Your information is used only for this test and is not saved on our servers.",
-            fillAllFields: "Please fill in all required fields.",
-            testingConnection: "Simulating connection... Please wait.",
-            successMessage: "Simulation successful! The connection data for {server}:{port} is valid.",
-            successWithEmail: "Simulation successful! In a real environment, a test email to {destination} would have been sent.",
-            errorMessage: "Simulation failed! Check credentials, port, and if the host allows connections.",
+             // ... (traduções completas)
+            successMessage: "Success! Connection to {server}:{port} was established.",
+            successWithEmail: "Success! Test email sent to {destination}.",
+            errorMessage: "Connection failed: {error}",
+            testingConnection: "Testing real connection...",
         },
-        es: { /* Traduções para Espanhol */ },
-        it: { /* Traduções para Italiano */ }
+        // ... (outras linguagens)
     };
 
     // --- Seleção de Elementos ---
@@ -74,70 +31,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const resultMessage = document.getElementById('result-message');
     const currentYearSpan = document.getElementById('currentYear');
     const langButtons = document.querySelectorAll('.lang-btn');
-    const disclaimerBox = document.getElementById('disclaimer-box');
-    const closeDisclaimerBtn = document.getElementById('close-disclaimer-btn');
     
     let currentLang = 'pt';
 
     // --- Funções ---
-    const setLanguage = (lang) => {
-        if (!translations[lang] || Object.keys(translations[lang]).length === 0) lang = 'pt'; // Fallback para PT
-        currentLang = lang;
-        localStorage.setItem('preferredLanguage', lang);
-
-        document.documentElement.lang = lang;
-        if(translations[lang].title) document.querySelector('title').textContent = translations[lang].title;
-        if(translations[lang].description) document.querySelector('meta[name="description"]').setAttribute('content', translations[lang].description);
-
-        document.querySelectorAll('[data-translate-key]').forEach(el => {
-            const key = el.getAttribute('data-translate-key');
-            const translationExists = translations[lang] && translations[lang][key];
-            if (translationExists) {
-                if (el.tagName === 'OPTION') {
-                    el.textContent = translations[lang][key];
-                } else if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
-                    el.placeholder = translations[lang][key];
-                } else {
-                    el.textContent = translations[lang][key];
-                }
-            }
-        });
-        
-        langButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.lang === lang));
-    };
-
-    const toggleDestinationEmail = () => {
-        if (sendEmailCheckbox.checked) {
-            destinationEmailGroup.classList.add('visible');
-            destinationEmailInput.required = true;
-        } else {
-            destinationEmailGroup.classList.remove('visible');
-            destinationEmailInput.required = false;
-            destinationEmailInput.value = '';
-        }
-    };
-    
-    const updatePortBasedOnSecurity = () => {
-        const security = securitySelect.value;
-        if (security === 'ssl') portInput.value = 465;
-        else if (security === 'starttls') portInput.value = 587;
-        else if (security === 'none') portInput.value = 25;
-    };
-    
-    function showResult(message, type) {
-        resultMessage.textContent = message;
-        resultMessage.className = 'status-message';
-        resultMessage.classList.add(`status-${type}`);
-    }
-
-    // --- Lógica do Aviso Amarelo ---
-    if (localStorage.getItem('disclaimerDismissed') === 'true') {
-        disclaimerBox.style.display = 'none';
-    }
-    closeDisclaimerBtn.addEventListener('click', () => {
-        disclaimerBox.style.display = 'none';
-        localStorage.setItem('disclaimerDismissed', 'true');
-    });
+    const setLanguage = (lang) => { /* ... (código da função setLanguage sem alterações) ... */ };
+    const toggleDestinationEmail = () => { /* ... (código da função toggleDestinationEmail sem alterações) ... */ };
+    const updatePortBasedOnSecurity = () => { /* ... (código da função updatePortBasedOnSecurity sem alterações) ... */ };
+    function showResult(message, type) { /* ... (código da função showResult sem alterações) ... */ }
 
     // --- Inicialização ---
     if (currentYearSpan) currentYearSpan.textContent = new Date().getFullYear();
@@ -149,25 +50,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Event Listeners ---
     langButtons.forEach(btn => btn.addEventListener('click', () => setLanguage(btn.dataset.lang)));
-    
     sendEmailCheckbox.addEventListener('change', toggleDestinationEmail);
-    
     securitySelect.addEventListener('change', updatePortBasedOnSecurity);
-    
     document.getElementById('btn-google').addEventListener('click', () => {
         serverInput.value = 'smtp.gmail.com';
         securitySelect.value = 'starttls';
         updatePortBasedOnSecurity();
     });
-    
     document.getElementById('btn-microsoft').addEventListener('click', () => {
-        serverInput.value = 'smtp.office356.com';
+        serverInput.value = 'smtp.office365.com';
         securitySelect.value = 'starttls';
         updatePortBasedOnSecurity();
     });
     
-    form.addEventListener('submit', (event) => {
+    // --- LÓGICA DE SUBMISSÃO REAL (SEM SIMULAÇÃO) ---
+    form.addEventListener('submit', async (event) => {
         event.preventDefault();
+
         const formData = {
             server: serverInput.value.trim(),
             security: securitySelect.value,
@@ -177,26 +76,43 @@ document.addEventListener('DOMContentLoaded', () => {
             sendTestEmail: sendEmailCheckbox.checked,
             destinationEmail: destinationEmailInput.value.trim()
         };
+        
         if (!form.checkValidity()) {
             showResult(translations[currentLang].fillAllFields, 'error');
             return;
         }
+
         showResult(translations[currentLang].testingConnection, 'testing');
         testBtn.disabled = true;
         testBtn.textContent = translations[currentLang].checkingButton;
-        
-        setTimeout(() => {
-            const isSuccess = Math.random() > 0.2; // 80% chance de sucesso
-            if (isSuccess) {
-                let message = formData.sendTestEmail 
-                    ? translations[currentLang].successWithEmail.replace('{destination}', formData.destinationEmail) 
-                    : translations[currentLang].successMessage.replace('{server}', formData.server).replace('{port}', formData.port);
-                showResult(message, 'success');
+
+        try {
+            // Chamada REAL para o backend na Vercel
+            const response = await fetch('/test-smtp', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData),
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                showResult(result.message, 'success');
             } else {
-                showResult(translations[currentLang].errorMessage, 'error');
+                // Mostra o erro real retornado pelo backend
+                const errorMessage = translations[currentLang].errorMessage.replace('{error}', result.message);
+                showResult(errorMessage, 'error');
             }
-            testBtn.disabled = false;
-            testBtn.textContent = translations[currentLang].testButton;
-        }, 2000);
+
+        } catch (error) {
+            // Erro de rede (ex: backend fora do ar)
+            const networkError = translations[currentLang].errorMessage.replace('{error}', 'Não foi possível conectar ao servidor de teste.');
+            showResult(networkError, 'error');
+        }
+
+        testBtn.disabled = false;
+        testBtn.textContent = translations[currentLang].testButton;
     });
+
+    // (Cole aqui as funções completas que foram abreviadas acima, como setLanguage, etc., da resposta anterior)
 });
