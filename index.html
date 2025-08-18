@@ -9,7 +9,99 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    
+    <style>
+        /* --- Reset Básico e Configurações Globais --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background-color: #f8f9fa; color: #343a40; display: flex; flex-direction: column; min-height: 100vh; }
+
+        /* --- Layout Principal --- */
+        .main-content { flex-grow: 1; display: flex; align-items: center; justify-content: center; padding: 2rem 1rem; }
+        .card { background-color: #ffffff; border-radius: 16px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.07); padding: 2.5rem 3rem; width: 100%; max-width: 550px; }
+
+        /* --- Cabeçalho e Logo --- */
+        .card-header { text-align: center; margin-bottom: 2rem; }
+        .logo-img { width: 300px; height: auto; }
+
+        /* --- Seletor de Idioma e Presets --- */
+        .language-switcher, .presets { display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center; margin-bottom: 1rem; }
+        .card-subtitle { text-align: center; }
+        .lang-btn, .btn-preset { background-color: #f8f9fa; border: 1px solid #f8f9fa; border-radius: 6px; padding: 0.5rem 0.85rem; font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: all 0.2s ease-in-out; display: flex; align-items: center; gap: 0.65rem; color: #495057; }
+        .lang-btn:hover, .btn-preset:hover { border-color: #dee2e6; background-color: #f1f3f5; }
+        .lang-btn.active { border-color: #14b8a6; color: #14b8a6; background-color: #f0fdfa; font-weight: 600; }
+        .lang-btn img, .btn-preset img { height: 16px; width: auto; }
+        .lang-btn img { border-radius: 2px; }
+
+        /* --- Textos --- */
+        .card-subtitle { font-size: 1rem; color: #6c757d; margin-bottom: 2rem; line-height: 1.6; }
+
+        /* --- Estilos de Formulário --- */
+        #smtp-form { text-align: left; }
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; font-size: 0.875rem; font-weight: 600; margin-bottom: 0.5rem; color: #343a40; }
+        .form-group input, .form-select { width: 100%; padding: 0.85rem 1rem; border: 1px solid #ced4da; border-radius: 8px; font-size: 1rem; background-color: #fff; -webkit-appearance: none; -moz-appearance: none; appearance: none; transition: border-color 0.2s, box-shadow 0.2s; }
+        .form-select { background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236c757d' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e"); background-position: right 0.7rem center; background-repeat: no-repeat; background-size: 1.5em 1.5em; padding-right: 2.5rem; }
+        .form-group input:focus, .form-select:focus { outline: none; border-color: #14b8a6; box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.25); }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+        /* --- E-mail de Destino (Oculto) --- */
+        .destination-email-group { max-height: 0; overflow: hidden; opacity: 0; margin-bottom: 0; transition: all 0.5s ease-in-out; }
+        .destination-email-group.visible { max-height: 100px; opacity: 1; margin-bottom: 1.5rem; }
+
+        /* --- Opções e Checkbox --- */
+        .options-group { margin-bottom: 1.75rem; display: flex; align-items: center; }
+        .checkbox-container { display: flex; align-items: center; position: relative; cursor: pointer; font-size: 0.9rem; user-select: none; }
+        .checkbox-container input { position: absolute; opacity: 0; cursor: pointer; }
+        .checkmark { height: 20px; width: 20px; background-color: #fff; border: 1px solid #ced4da; border-radius: 4px; margin-right: 10px; transition: all 0.2s; }
+        .checkbox-container:hover .checkmark { border-color: #adb5bd; }
+        .checkbox-container input:checked ~ .checkmark { background-color: #14b8a6; border-color: #14b8a6; }
+        .checkmark:after { content: ""; position: absolute; display: none; left: 7px; top: 4px; width: 5px; height: 10px; border: solid white; border-width: 0 3px 3px 0; transform: rotate(45deg); }
+        .checkbox-container input:checked ~ .checkmark:after { display: block; }
+
+        /* --- Botão Principal e Tooltip --- */
+        .submit-wrapper { display: flex; align-items: center; gap: 0.75rem; }
+        .btn { border-radius: 8px; font-size: 1rem; font-weight: 600; border: none; cursor: pointer; transition: all 0.2s; }
+        .btn:active { transform: scale(0.98); }
+        .btn-primary { background-color: #14b8a6; color: white; padding: 0.875rem 1.5rem; min-width: 150px; text-align: center; }
+        .btn-primary:hover { background-color: #0d9488; }
+        .btn-primary:disabled { background-color: #a1a1aa; cursor: not-allowed; }
+
+        /* --- Tooltip --- */
+        .tooltip-container { position: relative; display: flex; }
+        .info-icon { width: 44px; height: 44px; cursor: pointer; display: flex; align-items: center; justify-content: center; background-color: #f8f9fa; border: 1px solid #f8f9fa; border-radius: 8px; }
+        .info-icon img { width: 24px; height: 24px; opacity: 0.6; transition: all 0.2s; }
+        .info-icon:hover { border-color: #dee2e6; background-color: #f1f3f5; }
+        .info-icon:hover img { opacity: 1; }
+        .tooltip-text { visibility: hidden; width: 220px; background-color: #343a40; color: #fff; text-align: center; border-radius: 6px; padding: 8px; position: absolute; z-index: 1; bottom: 125%; left: 50%; margin-left: -110px; opacity: 0; transition: opacity 0.3s; font-size: 0.8rem; }
+        .tooltip-text::after { content: ""; position: absolute; top: 100%; left: 50%; margin-left: -5px; border-width: 5px; border-style: solid; border-color: #343a40 transparent transparent transparent; }
+        .tooltip-container:hover .tooltip-text { visibility: visible; opacity: 1; }
+
+        /* --- Mensagem de Status --- */
+        .status-message { display: none; margin-top: 1.5rem; padding: 1rem; border-radius: 8px; font-weight: 500; text-align: left; }
+        .status-testing { display: block; background-color: #dbeafe; color: #1e40af; }
+        .status-success { display: block; background-color: #dcfce7; color: #166534; }
+        .status-error { display: block; background-color: #fee2e2; color: #991b1b; }
+
+        /* --- Rodapé --- */
+        .app-footer { padding: 2.5rem 1rem; text-align: center; font-size: 0.875rem; color: #6b7280; }
+        .app-footer a { color: #3b82f6; text-decoration: none; font-weight: 500; }
+        .app-footer a:hover { text-decoration: underline; }
+        .app-footer .mb-1 { margin-bottom: 0.25rem; }
+        .app-footer .mb-3 { margin-bottom: 1rem; }
+        .heart-icon { display: inline-block; width: 1em; height: 1em; vertical-align: -0.125em; fill: #ef4444; }
+        .rouglas-logo-img { height: 25px; opacity: 0.7; transition: opacity 0.2s; }
+        .rouglas-logo-img:hover { opacity: 1; }
+
+        /* --- Responsividade --- */
+        @media (max-width: 640px) {
+            .main-content { padding: 1rem; align-items: flex-start; }
+            .card { padding: 1.5rem; }
+            .logo-img { width: 240px; }
+            .presets { flex-direction: column; align-items: stretch; }
+            .form-row { grid-template-columns: 1fr; gap: 0; }
+            .form-row .form-group:first-child { margin-bottom: 1.5rem; }
+        }
+    </style>
 </head>
 <body>
 
@@ -21,12 +113,6 @@
                 </a>
             </header>
             
-            <div id="disclaimer-box" class="disclaimer-box">
-                <button id="close-disclaimer-btn" class="close-btn" aria-label="Fechar aviso">&times;</button>
-                <strong data-translate-key="disclaimerTitle">Atenção:</strong>
-                <span data-translate-key="disclaimerText">Esta é uma ferramenta de demonstração de interface (Frontend). Nenhum e-mail real será enviado.</span>
-            </div>
-
             <div class="language-switcher">
                 <button class="lang-btn" data-lang="pt"><img src="icon/br.svg" alt="Português"> PT</button>
                 <button class="lang-btn" data-lang="en"><img src="icon/us.svg" alt="English"> EN</button>
@@ -39,12 +125,8 @@
             </p>
 
             <div class="presets">
-                <button class="btn btn-preset" id="btn-google">
-                    <img src="icon/gmail.svg" alt="Gmail Icon"> Google/Gmail
-                </button>
-                <button class="btn btn-preset" id="btn-microsoft">
-                    <img src="icon/outlook.svg" alt="Outlook Icon"> Microsoft/Outlook
-                </button>
+                <button class="btn btn-preset" id="btn-google"><img src="icon/gmail.svg" alt="Gmail Icon"> Google/Gmail</button>
+                <button class="btn btn-preset" id="btn-microsoft"><img src="icon/outlook.svg" alt="Outlook Icon"> Microsoft/Outlook</button>
             </div>
 
             <form id="smtp-form" novalidate>
@@ -89,7 +171,7 @@
                     <button type="submit" class="btn btn-primary" id="test-btn" data-translate-key="testButton">Testar Conexão</button>
                     <div class="tooltip-container">
                         <div class="info-icon"><img src="icon/info.svg" alt="Info Icon"></div>
-                        <div class="tooltip-text" data-translate-key="privacyTooltip">Suas informações são usadas apenas para este teste e não são salvas em nossos servidores.</div>
+                        <div class="tooltip-text" data-translate-key="privacyTooltip">Suas informações não são salvas.</div>
                     </div>
                 </div>
             </form>
@@ -98,9 +180,158 @@
     </main>
     
     <footer class="app-footer">
-        <p>V1.0 | SMTP Test © <span id="currentYear">2025</span></p>
+        <p class="mb-1">V1.0 | SMTP Test © <span id="currentYear">2025</span></p>
+        <p class="mb-3">
+            <svg class="heart-icon" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path></svg>
+            <a href="http://link.mercadopago.com.br/rouglas" target="_blank" rel="noopener noreferrer" id="supportLinkText">Apoie este projeto</a>
+        </p>
+        <div class="rouglas-logo-container">
+            <a href="https://rouglas.com" target="_blank" rel="noopener noreferrer" aria-label="Rouglas.com">
+                <img src="https://rouglas.com/rouglaslogo.svg" alt="Rouglas Logo" class="rouglas-logo-img">
+            </a>
+        </div>
     </footer>
 
-    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- Dicionário de Traduções ---
+            const translations = {
+                pt: {
+                    successMessage: "Sucesso! A conexão com {server}:{port} foi estabelecida.",
+                    successWithEmail: "Sucesso! E-mail de teste enviado para {destination}.",
+                    errorMessage: "Falha na conexão: {error}",
+                    testingConnection: "Testando conexão real...",
+                    checkingButton: "Testando...",
+                    subtitle: "Verifique suas configurações de servidor SMTP. Teste conexões para garantir que seu serviço de e-mail está configurado corretamente.",
+                    labelServer: "Servidor SMTP", labelSecurity: "Segurança", optionStarttls: "STARTTLS", optionSslTls: "SSL/TLS", optionNone: "Nenhuma",
+                    labelPort: "Porta", placeholderPort: "Ex: 587", labelUser: "Usuário / E-mail", labelPassword: "Senha", placeholderPassword: "••••••••••••",
+                    sendTestEmail: "Enviar e-mail de teste", labelDestination: "E-mail de Destino", placeholderDestination: "para.onde@enviar.com",
+                    testButton: "Testar Conexão", privacyTooltip: "Suas informações não são salvas.", fillAllFields: "Por favor, preencha todos os campos.",
+                },
+                en: {
+                    successMessage: "Success! Connection to {server}:{port} was established.",
+                    successWithEmail: "Success! Test email sent to {destination}.",
+                    errorMessage: "Connection failed: {error}",
+                    testingConnection: "Testing real connection...",
+                    checkingButton: "Testing...",
+                    subtitle: "Check your SMTP server settings. Test connections to ensure your email service is configured correctly.",
+                    labelServer: "SMTP Server", labelSecurity: "Security", optionStarttls: "STARTTLS", optionSslTls: "SSL/TLS", optionNone: "None",
+                    labelPort: "Port", placeholderPort: "Ex: 587", labelUser: "User / Email", labelPassword: "Password", placeholderPassword: "••••••••••••",
+                    sendTestEmail: "Send test email", labelDestination: "Destination Email", placeholderDestination: "to.where@send.com",
+                    testButton: "Test Connection", privacyTooltip: "Your information is not saved.", fillAllFields: "Please fill in all fields.",
+                }
+            };
+
+            // --- Seleção de Elementos ---
+            const form = document.getElementById('smtp-form');
+            const serverInput = document.getElementById('server');
+            const securitySelect = document.getElementById('security');
+            const portInput = document.getElementById('port');
+            const sendEmailCheckbox = document.getElementById('send-email-checkbox');
+            const destinationEmailGroup = document.getElementById('destination-email-group');
+            const destinationEmailInput = document.getElementById('destination-email');
+            const testBtn = document.getElementById('test-btn');
+            const resultMessage = document.getElementById('result-message');
+            const currentYearSpan = document.getElementById('currentYear');
+            const langButtons = document.querySelectorAll('.lang-btn');
+            const btnGoogle = document.getElementById('btn-google');
+            const btnMicrosoft = document.getElementById('btn-microsoft');
+            let currentLang = 'pt';
+
+            // --- Funções ---
+            function setLanguage(lang) {
+                if (!translations[lang] || Object.keys(translations[lang]).length === 0) lang = 'pt';
+                currentLang = lang;
+                localStorage.setItem('preferredLanguage', lang);
+                document.documentElement.lang = lang;
+                const langData = translations[lang];
+                document.querySelectorAll('[data-translate-key]').forEach(el => {
+                    const key = el.dataset.translateKey;
+                    if (langData[key]) {
+                        if (el.placeholder !== undefined) el.placeholder = langData[key];
+                        else el.textContent = langData[key];
+                    }
+                });
+                langButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.lang === lang));
+            }
+
+            function toggleDestinationEmail() {
+                if (sendEmailCheckbox.checked) {
+                    destinationEmailGroup.classList.add('visible');
+                    destinationEmailInput.required = true;
+                } else {
+                    destinationEmailGroup.classList.remove('visible');
+                    destinationEmailInput.required = false;
+                }
+            }
+
+            function updatePortBasedOnSecurity() {
+                const security = securitySelect.value;
+                if (security === 'ssl') portInput.value = 465;
+                else if (security === 'starttls') portInput.value = 587;
+                else if (security === 'none') portInput.value = 25;
+            }
+
+            function showResult(message, type) {
+                resultMessage.textContent = message;
+                resultMessage.className = 'status-message';
+                resultMessage.classList.add(`status-${type}`);
+            }
+
+            async function handleFormSubmit(event) {
+                event.preventDefault();
+                if (!form.checkValidity()) {
+                    showResult(translations[currentLang].fillAllFields, 'error');
+                    return;
+                }
+                const originalButtonText = translations[currentLang].testButton;
+                showResult(translations[currentLang].testingConnection, 'testing');
+                testBtn.disabled = true;
+                testBtn.textContent = translations[currentLang].checkingButton;
+
+                const formData = {
+                    server: serverInput.value.trim(), security: securitySelect.value, port: portInput.value.trim(),
+                    email: document.getElementById('email').value.trim(), password: document.getElementById('password').value.trim(),
+                    sendTestEmail: sendEmailCheckbox.checked, destinationEmail: destinationEmailInput.value.trim()
+                };
+
+                try {
+                    const response = await fetch('/test-smtp', {
+                        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(formData),
+                    });
+                    const result = await response.json();
+                    if (response.ok) { // Check if response status is 2xx
+                        showResult(result.message, 'success');
+                    } else {
+                        showResult(translations[currentLang].errorMessage.replace('{error}', result.message), 'error');
+                    }
+                } catch (error) {
+                    showResult(translations[currentLang].errorMessage.replace('{error}', 'Não foi possível conectar ao servidor de teste.'), 'error');
+                }
+
+                testBtn.disabled = false;
+                testBtn.textContent = originalButtonText;
+            }
+
+            // --- Inicialização e Event Listeners ---
+            if (currentYearSpan) currentYearSpan.textContent = new Date().getFullYear();
+            const savedLang = localStorage.getItem('preferredLanguage') || navigator.language.split('-')[0];
+            setLanguage(savedLang);
+            updatePortBasedOnSecurity();
+            toggleDestinationEmail();
+
+            langButtons.forEach(btn => btn.addEventListener('click', () => setLanguage(btn.dataset.lang)));
+            sendEmailCheckbox.addEventListener('change', toggleDestinationEmail);
+            securitySelect.addEventListener('change', updatePortBasedOnSecurity);
+            btnGoogle.addEventListener('click', () => {
+                serverInput.value = 'smtp.gmail.com'; securitySelect.value = 'starttls'; updatePortBasedOnSecurity();
+            });
+            btnMicrosoft.addEventListener('click', () => {
+                serverInput.value = 'smtp.office365.com'; securitySelect.value = 'starttls'; updatePortBasedOnSecurity();
+            });
+            form.addEventListener('submit', handleFormSubmit);
+        });
+    </script>
 </body>
 </html>
