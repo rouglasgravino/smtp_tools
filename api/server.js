@@ -59,8 +59,8 @@ app.post('/test-smtp', async (req, res) => {
             await transporter.sendMail({
                 from: email,
                 to: destinationEmail,
-                subject: 'Teste SMTP - smtp.rouglas.com',
-                text: 'Bom trabalho, Funcionando!\n\nsmtp.rouglas.com\ndivertido e informativo'
+                subject: 'Test SMTP',
+                text: 'OK \n\n\nwww.rouglas.com\n'
             });
             console.log('E-mail de teste enviado para:', destinationEmail);
             return res.json({ success: true, message: `Conexão bem-sucedida e e-mail de teste enviado para ${destinationEmail}!` });
