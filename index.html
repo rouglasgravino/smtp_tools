@@ -10,6 +10,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
+    <script src="https://www.google.com/recaptcha/api.js?render=6Ld8T6srAAAAAAwXZ0GOLUl-WAnPHITT0Wlawxqw"></script>
+
     <style>
         /* --- Reset Básico e Configurações Globais --- */
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -73,18 +75,18 @@
             background-color: #14b8a6; 
             color: white; 
             padding: 0.875rem 1.5rem; 
-            width: 100%; /* Ocupa a largura total */
+            width: 100%;
             text-align: center; 
-            display: flex; /* Para centralizar o conteúdo interno (texto e spinner) */
+            display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 47px; /* Altura fixa para não mudar de tamanho */
+            min-height: 47px;
         }
         .btn-primary:hover { background-color: #0d9488; }
         .btn-primary:disabled { background-color: #a1a1aa; cursor: not-allowed; }
         
         .loading-spinner {
-            display: none; /* Escondido por padrão */
+            display: none;
             border: 3px solid rgba(255, 255, 255, 0.3);
             border-left-color: #fff;
             border-radius: 50%;
@@ -98,10 +100,10 @@
         }
 
         .btn-primary.loading .loading-spinner {
-            display: block; /* Mostra o spinner quando o botão tem a classe 'loading' */
+            display: block;
         }
         .btn-primary.loading .button-text {
-            display: none; /* Esconde o texto quando o botão tem a classe 'loading' */
+            display: none;
         }
 
         /* --- Tooltip --- */
@@ -161,7 +163,7 @@
             <p class="card-subtitle" data-translate-key="subtitle"></p>
 
             <div class="presets">
-                <button class="btn btn-preset" id="btn-custom"><img src="icon/edit.svg" alt="Custom Icon"> <span data-translate-key="presetCustom">Customizado</span></button>
+                <button class="btn btn-preset" id="btn-custom"><img src="icon/edit.svg" alt="Custom Icon"> <span data-translate-key="presetCustom"></span></button>
                 <button class="btn btn-preset" id="btn-google"><img src="icon/gmail.svg" alt="Gmail Icon"> Google/Gmail</button>
                 <button class="btn btn-preset" id="btn-microsoft"><img src="icon/outlook.svg" alt="Outlook Icon"> Microsoft/Outlook</button>
             </div>
@@ -235,6 +237,8 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
 
+            const RECAPTCHA_SITE_KEY = '6Ld8T6srAAAAAAwXZ0GOLUl-WAnPHITT0Wlawxqw';
+
             const translations = {
                 pt: {
                     successMessage: "Sucesso! A conexão com {server}:{port} foi estabelecida.",
@@ -246,7 +250,7 @@
                     labelServer: "Servidor SMTP", labelSecurity: "Segurança", optionStarttls: "STARTTLS", optionSslTls: "SSL/TLS", optionNone: "Nenhuma",
                     labelPort: "Porta", placeholderPort: "Ex: 587", labelUser: "Usuário / E-mail", labelPassword: "Senha", placeholderPassword: "••••••••••••",
                     sendTestEmail: "Enviar e-mail de teste", labelDestination: "E-mail de Destino", placeholderDestination: "para.onde@enviar.com",
-                    testButton: "Testar Conexão", privacyTooltip: "Suas informações não são salvas.", fillAllFields: "Por favor, preencha todos os campos.",
+                    testButton: "Testar Conexão", privacyTooltip: "Suas informações não são salvas.", fillAllFields: "Por favor, preencha todos os campos obrigatórios.",
                     supportLinkText: "Apoie este projeto", presetCustom: "Customizado"
                 },
                 en: {
@@ -259,7 +263,7 @@
                     labelServer: "SMTP Server", labelSecurity: "Security", optionStarttls: "STARTTLS", optionSslTls: "SSL/TLS", optionNone: "None",
                     labelPort: "Port", placeholderPort: "Ex: 587", labelUser: "User / Email", labelPassword: "Password", placeholderPassword: "••••••••••••",
                     sendTestEmail: "Send test email", labelDestination: "Destination Email", placeholderDestination: "to.where@send.com",
-                    testButton: "Test Connection", privacyTooltip: "Your information is not saved.", fillAllFields: "Please fill in all fields.",
+                    testButton: "Test Connection", privacyTooltip: "Your information is not saved.", fillAllFields: "Please fill in all required fields.",
                     supportLinkText: "Support this project", presetCustom: "Custom"
                 },
                 es: {
@@ -272,7 +276,7 @@
                     labelServer: "Servidor SMTP", labelSecurity: "Seguridad", optionStarttls: "STARTTLS", optionSslTls: "SSL/TLS", optionNone: "Ninguna",
                     labelPort: "Puerto", placeholderPort: "Ej: 587", labelUser: "Usuario / Correo electrónico", labelPassword: "Contraseña", placeholderPassword: "••••••••••••",
                     sendTestEmail: "Enviar correo de prueba", labelDestination: "Correo de Destino", placeholderDestination: "a.donde@enviar.com",
-                    testButton: "Probar Conexión", privacyTooltip: "Su información no se guarda.", fillAllFields: "Por favor, complete todos los campos.",
+                    testButton: "Probar Conexión", privacyTooltip: "Su información no se guarda.", fillAllFields: "Por favor, complete todos los campos obligatorios.",
                     supportLinkText: "Apoya este proyecto", presetCustom: "Personalizado"
                 },
                 it: {
@@ -357,32 +361,38 @@
                     return;
                 }
                 
-                showResult(translations[currentLang].testingConnection, 'testing');
                 testBtn.disabled = true;
                 testBtn.classList.add('loading');
+                showResult(translations[currentLang].testingConnection, 'testing');
 
-                const formData = {
-                    server: serverInput.value.trim(), security: securitySelect.value, port: portInput.value.trim(),
-                    email: document.getElementById('email').value.trim(), password: document.getElementById('password').value.trim(),
-                    sendTestEmail: sendEmailCheckbox.checked, destinationEmail: destinationEmailInput.value.trim()
-                };
+                grecaptcha.ready(function() {
+                    grecaptcha.execute(RECAPTCHA_SITE_KEY, {action: 'submit'}).then(async function(token) {
+                        
+                        const formData = {
+                            server: serverInput.value.trim(), port: portInput.value.trim(),
+                            security: securitySelect.value, email: emailInput.value.trim(), 
+                            password: passwordInput.value.trim(), sendTestEmail: sendEmailCheckbox.checked, 
+                            destinationEmail: destinationEmailInput.value.trim(), recaptchaToken: token
+                        };
 
-                try {
-                    const response = await fetch('/test-smtp', {
-                        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(formData),
+                        try {
+                            const response = await fetch('/test-smtp', {
+                                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(formData),
+                            });
+                            const result = await response.json();
+                            if (response.ok) {
+                                showResult(result.message, 'success');
+                            } else {
+                                showResult(translations[currentLang].errorMessage.replace('{error}', result.message), 'error');
+                            }
+                        } catch (error) {
+                            showResult(translations[currentLang].errorMessage.replace('{error}', 'Não foi possível conectar ao servidor de teste.'), 'error');
+                        } finally {
+                            testBtn.disabled = false;
+                            testBtn.classList.remove('loading');
+                        }
                     });
-                    const result = await response.json();
-                    if (response.ok) {
-                        showResult(result.message, 'success');
-                    } else {
-                        showResult(translations[currentLang].errorMessage.replace('{error}', result.message), 'error');
-                    }
-                } catch (error) {
-                    showResult(translations[currentLang].errorMessage.replace('{error}', 'Não foi possível conectar ao servidor de teste.'), 'error');
-                }
-
-                testBtn.disabled = false;
-                testBtn.classList.remove('loading');
+                });
             }
 
             if (currentYearSpan) currentYearSpan.textContent = new Date().getFullYear();
@@ -402,7 +412,6 @@
                 passwordInput.value = '';
                 serverInput.focus();
             });
-
             btnGoogle.addEventListener('click', () => {
                 serverInput.value = 'smtp.gmail.com'; securitySelect.value = 'starttls'; updatePortBasedOnSecurity();
             });

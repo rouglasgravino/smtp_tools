@@ -1,49 +1,66 @@
-// api/server.js - Nosso Backend para a Vercel
+// api/server.js - Backend com verificação reCAPTCHA v3
 
-// 1. Importar as ferramentas
 const express = require('express');
 const nodemailer = require('nodemailer');
 const cors = require('cors');
+const axios = require('axios'); // Ferramenta para falar com o Google
 
-// 2. Configurar o servidor Express
 const app = express();
-app.use(express.json()); // Permite que o servidor entenda dados JSON
-app.use(cors()); // Permite que nosso site se comunique com este servidor
+app.use(express.json());
+app.use(cors());
 
-// 3. Criar a rota/endpoint para testar a conexão
-// Este código será executado quando o frontend chamar o endereço '/test-smtp'
+// Sua Chave Secreta do reCAPTCHA
+const RECAPTCHA_SECRET_KEY = '6Ld8T6srAAAAACvQfr0NrlWjeLwvOQ3-bi1-56Cq';
+
 app.post('/test-smtp', async (req, res) => {
-    // Pega os dados que o formulário enviou
-    const { server, port, security, email, password, sendTestEmail, destinationEmail } = req.body;
+    // Pega todos os dados do formulário, incluindo o novo token do reCAPTCHA
+    const { server, port, security, email, password, sendTestEmail, destinationEmail, recaptchaToken } = req.body;
 
-    console.log('Recebida requisição para testar:', req.body);
+    // --- ETAPA DE VERIFICAÇÃO ANTI-BOT ---
+    try {
+        const verificationURL = `https://www.google.com/recaptcha/api/siteverify?secret=${RECAPTCHA_SECRET_KEY}&response=${recaptchaToken}`;
+        
+        const response = await axios.post(verificationURL);
+        const { success, score } = response.data;
+
+        if (!success || score < 0.5) {
+            // Se não for sucesso ou a pontuação for muito baixa, bloqueia como robô
+            console.warn('Requisição bloqueada por suspeita de bot. Score:', score);
+            return res.status(403).json({ success: false, message: 'Falha na verificação anti-bot. Tente novamente.' });
+        }
+        
+        console.log('Verificação anti-bot bem-sucedida. Score:', score);
+
+    } catch (error) {
+        console.error('Erro ao verificar reCAPTCHA:', error);
+        return res.status(500).json({ success: false, message: 'Erro no serviço anti-bot.' });
+    }
+    
+    // --- ETAPA DE TESTE SMTP (só executa se o anti-bot passar) ---
+    console.log('Iniciando teste SMTP para:', { server, port, email });
 
     try {
-        // Configura o Nodemailer com os dados do usuário
         const transporter = nodemailer.createTransport({
             host: server,
             port: port,
-            secure: security === 'ssl', // `true` se a segurança for SSL (porta 465)
+            secure: security === 'ssl',
             auth: {
                 user: email,
                 pass: password,
             },
             tls: {
-                rejectUnauthorized: false // Importante para alguns servidores com certificados autoassinados
+                rejectUnauthorized: false
             }
         });
 
-        // Tenta se conectar e autenticar para verificar as credenciais
         await transporter.verify();
 
-        // Se a verificação funcionou, a conexão é válida
         if (sendTestEmail) {
-            // Se o usuário também pediu para enviar um e-mail de teste
             await transporter.sendMail({
                 from: email,
                 to: destinationEmail,
-                subject: 'Test SMTP - smtp.rouglas.com',
-                text: 'OK! \n\nsmtp.rouglas.com\n'
+                subject: 'Teste SMTP - smtp.rouglas.com',
+                text: 'Bom trabalho, Funcionando!\n\nsmtp.rouglas.com\ndivertido e informativo'
             });
             console.log('E-mail de teste enviado para:', destinationEmail);
             return res.json({ success: true, message: `Conexão bem-sucedida e e-mail de teste enviado para ${destinationEmail}!` });
@@ -53,11 +70,8 @@ app.post('/test-smtp', async (req, res) => {
 
     } catch (error) {
         console.error('Erro na conexão SMTP:', error);
-        // Se deu erro, retorna a mensagem de erro para o frontend
         return res.status(500).json({ success: false, message: `Falha na conexão: ${error.message}` });
     }
 });
 
-// 4. Exportar o app para a Vercel (ESSENCIAL!)
-// Em vez de app.listen(...), nós exportamos para que a Vercel possa gerenciá-lo.
 module.exports = app;
