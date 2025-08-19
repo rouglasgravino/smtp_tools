@@ -21,14 +21,7 @@
 
         /* --- Cabeçalho e Logo --- */
         .card-header { text-align: center; margin-bottom: 2rem; }
-        .logo-img {
-            width: 300px;
-            height: auto;
-            transition: opacity 0.2s ease-in-out;
-        }
-        .logo-link:hover .logo-img {
-            opacity: 0.75;
-        }
+        .logo-img { width: 300px; height: auto; }
 
         /* --- Seletor de Idioma e Presets --- */
         .language-switcher, .presets { display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center; margin-bottom: 1rem; }
@@ -65,44 +58,13 @@
         .checkmark:after { content: ""; position: absolute; display: none; left: 7px; top: 4px; width: 5px; height: 10px; border: solid white; border-width: 0 3px 3px 0; transform: rotate(45deg); }
         .checkbox-container input:checked ~ .checkmark:after { display: block; }
 
-        /* --- Botão Principal, Loading e Tooltip --- */
-        .submit-wrapper { display: flex; flex-direction: column; align-items: center; gap: 0.75rem; }
+        /* --- Botão Principal e Tooltip --- */
+        .submit-wrapper { display: flex; align-items: center; gap: 0.75rem; }
         .btn { border-radius: 8px; font-size: 1rem; font-weight: 600; border: none; cursor: pointer; transition: all 0.2s; }
         .btn:active { transform: scale(0.98); }
-        .btn-primary { 
-            background-color: #14b8a6; 
-            color: white; 
-            padding: 0.875rem 1.5rem; 
-            width: 100%; /* Ocupa a largura total */
-            text-align: center; 
-            display: flex; /* Para centralizar o conteúdo interno (texto e spinner) */
-            align-items: center;
-            justify-content: center;
-            min-height: 47px; /* Altura fixa para não mudar de tamanho */
-        }
+        .btn-primary { background-color: #14b8a6; color: white; padding: 0.875rem 1.5rem; min-width: 150px; text-align: center; }
         .btn-primary:hover { background-color: #0d9488; }
         .btn-primary:disabled { background-color: #a1a1aa; cursor: not-allowed; }
-        
-        .loading-spinner {
-            display: none; /* Escondido por padrão */
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-left-color: #fff;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin { 
-            0% { transform: rotate(0deg); } 
-            100% { transform: rotate(360deg); } 
-        }
-
-        .btn-primary.loading .loading-spinner {
-            display: block; /* Mostra o spinner quando o botão tem a classe 'loading' */
-        }
-        .btn-primary.loading .button-text {
-            display: none; /* Esconde o texto quando o botão tem a classe 'loading' */
-        }
 
         /* --- Tooltip --- */
         .tooltip-container { position: relative; display: flex; }
@@ -158,60 +120,58 @@
                 <button class="lang-btn" data-lang="it"><img src="icon/it.svg" alt="Italiano"> IT</button>
             </div>
             
-            <p class="card-subtitle" data-translate-key="subtitle"></p>
+            <p class="card-subtitle" data-translate-key="subtitle">
+                Verifique suas configurações de servidor SMTP. Teste conexões para garantir que seu serviço de e-mail está configurado corretamente.
+            </p>
 
             <div class="presets">
-                <button class="btn btn-preset" id="btn-custom"><img src="icon/edit.svg" alt="Custom Icon"> <span data-translate-key="presetCustom">Customizado</span></button>
                 <button class="btn btn-preset" id="btn-google"><img src="icon/gmail.svg" alt="Gmail Icon"> Google/Gmail</button>
                 <button class="btn btn-preset" id="btn-microsoft"><img src="icon/outlook.svg" alt="Outlook Icon"> Microsoft/Outlook</button>
             </div>
 
             <form id="smtp-form" novalidate>
                  <div class="form-group">
-                    <label for="server" data-translate-key="labelServer"></label>
-                    <input type="text" id="server" name="server" required>
+                    <label for="server" data-translate-key="labelServer">Servidor SMTP</label>
+                    <input type="text" id="server" name="server" placeholder="smtp.example.com" required>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="security" data-translate-key="labelSecurity"></label>
+                        <label for="security" data-translate-key="labelSecurity">Segurança</label>
                         <select id="security" name="security" class="form-select" required>
-                            <option value="starttls" data-translate-key="optionStarttls"></option>
-                            <option value="ssl" data-translate-key="optionSslTls"></option>
-                            <option value="none" data-translate-key="optionNone"></option>
+                            <option value="starttls" data-translate-key="optionStarttls">STARTTLS</option>
+                            <option value="ssl" data-translate-key="optionSslTls">SSL/TLS</option>
+                            <option value="none" data-translate-key="optionNone">Nenhuma</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="port" data-translate-key="labelPort"></label>
-                        <input type="number" id="port" name="port" data-translate-key="placeholderPort" required>
+                        <label for="port" data-translate-key="labelPort">Porta</label>
+                        <input type="number" id="port" name="port" data-translate-key="placeholderPort" placeholder="Ex: 587" required>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="email" data-translate-key="labelUser"></label>
-                    <input type="email" id="email" name="email" required>
+                    <label for="email" data-translate-key="labelUser">Usuário / E-mail</label>
+                    <input type="email" id="email" name="email" placeholder="seu.email@example.com" required>
                 </div>
                 <div class="form-group">
-                    <label for="password" data-translate-key="labelPassword"></label>
-                    <input type="password" id="password" data-translate-key="placeholderPassword" required>
+                    <label for="password" data-translate-key="labelPassword">Senha</label>
+                    <input type="password" id="password" name="password" data-translate-key="placeholderPassword" placeholder="••••••••••••" required>
                 </div>
                 <div class="options-group">
                     <label class="checkbox-container">
                         <input type="checkbox" id="send-email-checkbox">
                         <span class="checkmark"></span>
-                        <span data-translate-key="sendTestEmail"></span>
+                        <span data-translate-key="sendTestEmail">Enviar e-mail de teste</span>
                     </label>
                 </div>
                 <div class="form-group destination-email-group" id="destination-email-group">
-                    <label for="destination-email" data-translate-key="labelDestination"></label>
-                    <input type="email" id="destination-email" name="destination-email" data-translate-key="placeholderDestination">
+                    <label for="destination-email" data-translate-key="labelDestination">E-mail de Destino</label>
+                    <input type="email" id="destination-email" name="destination-email" data-translate-key="placeholderDestination" placeholder="para.onde@enviar.com">
                 </div>
                 <div class="submit-wrapper">
-                    <button type="submit" class="btn btn-primary" id="test-btn">
-                        <div class="loading-spinner"></div>
-                        <span class="button-text" data-translate-key="testButton"></span>
-                    </button>
+                    <button type="submit" class="btn btn-primary" id="test-btn" data-translate-key="testButton">Testar Conexão</button>
                     <div class="tooltip-container">
                         <div class="info-icon"><img src="icon/info.svg" alt="Info Icon"></div>
-                        <div class="tooltip-text" data-translate-key="privacyTooltip"></div>
+                        <div class="tooltip-text" data-translate-key="privacyTooltip">Suas informações não são salvas.</div>
                     </div>
                 </div>
             </form>
@@ -220,10 +180,10 @@
     </main>
     
     <footer class="app-footer">
-        <p class="mb-1">V1.0 | SMTP Test © <span id="currentYear"></span></p>
+        <p class="mb-1">V1.0 | SMTP Test © <span id="currentYear">2025</span></p>
         <p class="mb-3">
             <svg class="heart-icon" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path></svg>
-            <a href="http://link.mercadopago.com.br/rouglas" target="_blank" rel="noopener noreferrer" id="supportLinkText" data-translate-key="supportLinkText"></a>
+            <a href="http://link.mercadopago.com.br/rouglas" target="_blank" rel="noopener noreferrer" id="supportLinkText">Apoie este projeto</a>
         </p>
         <div class="rouglas-logo-container">
             <a href="https://rouglas.com" target="_blank" rel="noopener noreferrer" aria-label="Rouglas.com">
@@ -235,6 +195,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
 
+            // --- Dicionário de Traduções ---
             const translations = {
                 pt: {
                     successMessage: "Sucesso! A conexão com {server}:{port} foi estabelecida.",
@@ -247,7 +208,6 @@
                     labelPort: "Porta", placeholderPort: "Ex: 587", labelUser: "Usuário / E-mail", labelPassword: "Senha", placeholderPassword: "••••••••••••",
                     sendTestEmail: "Enviar e-mail de teste", labelDestination: "E-mail de Destino", placeholderDestination: "para.onde@enviar.com",
                     testButton: "Testar Conexão", privacyTooltip: "Suas informações não são salvas.", fillAllFields: "Por favor, preencha todos os campos.",
-                    supportLinkText: "Apoie este projeto", presetCustom: "Customizado"
                 },
                 en: {
                     successMessage: "Success! Connection to {server}:{port} was established.",
@@ -260,42 +220,14 @@
                     labelPort: "Port", placeholderPort: "Ex: 587", labelUser: "User / Email", labelPassword: "Password", placeholderPassword: "••••••••••••",
                     sendTestEmail: "Send test email", labelDestination: "Destination Email", placeholderDestination: "to.where@send.com",
                     testButton: "Test Connection", privacyTooltip: "Your information is not saved.", fillAllFields: "Please fill in all fields.",
-                    supportLinkText: "Support this project", presetCustom: "Custom"
-                },
-                es: {
-                    successMessage: "¡Éxito! Se estableció la conexión con {server}:{port}.",
-                    successWithEmail: "¡Éxito! Correo de prueba enviado a {destination}.",
-                    errorMessage: "Fallo en la conexión: {error}",
-                    testingConnection: "Probando conexión real...",
-                    checkingButton: "Probando...",
-                    subtitle: "Verifique la configuración de su servidor SMTP. Pruebe las conexiones para asegurarse de que su servicio de correo electrónico esté configurado correctamente.",
-                    labelServer: "Servidor SMTP", labelSecurity: "Seguridad", optionStarttls: "STARTTLS", optionSslTls: "SSL/TLS", optionNone: "Ninguna",
-                    labelPort: "Puerto", placeholderPort: "Ej: 587", labelUser: "Usuario / Correo electrónico", labelPassword: "Contraseña", placeholderPassword: "••••••••••••",
-                    sendTestEmail: "Enviar correo de prueba", labelDestination: "Correo de Destino", placeholderDestination: "a.donde@enviar.com",
-                    testButton: "Probar Conexión", privacyTooltip: "Su información no se guarda.", fillAllFields: "Por favor, complete todos los campos.",
-                    supportLinkText: "Apoya este proyecto", presetCustom: "Personalizado"
-                },
-                it: {
-                    successMessage: "Successo! La connessione a {server}:{port} è stata stabilita.",
-                    successWithEmail: "Successo! Email di prova inviata a {destination}.",
-                    errorMessage: "Connessione fallita: {error}",
-                    testingConnection: "Test di connessione reale...",
-                    checkingButton: "Test in corso...",
-                    subtitle: "Controlla le impostazioni del tuo server SMTP. Testa le connessioni per assicurarti che il tuo servizio di posta elettronica sia configurato correttamente.",
-                    labelServer: "Server SMTP", labelSecurity: "Sicurezza", optionStarttls: "STARTTLS", optionSslTls: "SSL/TLS", optionNone: "Nessuna",
-                    labelPort: "Porta", placeholderPort: "Es: 587", labelUser: "Utente / Email", labelPassword: "Password", placeholderPassword: "••••••••••••",
-                    sendTestEmail: "Invia email di prova", labelDestination: "Email di Destinazione", placeholderDestination: "a.dove@inviare.com",
-                    testButton: "Testa Connessione", privacyTooltip: "Le tue informazioni non vengono salvate.", fillAllFields: "Per favore, compila tutti i campi.",
-                    supportLinkText: "Sostieni questo progetto", presetCustom: "Personalizzato"
                 }
             };
 
+            // --- Seleção de Elementos ---
             const form = document.getElementById('smtp-form');
             const serverInput = document.getElementById('server');
             const securitySelect = document.getElementById('security');
             const portInput = document.getElementById('port');
-            const emailInput = document.getElementById('email');
-            const passwordInput = document.getElementById('password');
             const sendEmailCheckbox = document.getElementById('send-email-checkbox');
             const destinationEmailGroup = document.getElementById('destination-email-group');
             const destinationEmailInput = document.getElementById('destination-email');
@@ -303,11 +235,11 @@
             const resultMessage = document.getElementById('result-message');
             const currentYearSpan = document.getElementById('currentYear');
             const langButtons = document.querySelectorAll('.lang-btn');
-            const btnCustom = document.getElementById('btn-custom');
             const btnGoogle = document.getElementById('btn-google');
             const btnMicrosoft = document.getElementById('btn-microsoft');
             let currentLang = 'pt';
 
+            // --- Funções ---
             function setLanguage(lang) {
                 if (!translations[lang] || Object.keys(translations[lang]).length === 0) lang = 'pt';
                 currentLang = lang;
@@ -317,11 +249,8 @@
                 document.querySelectorAll('[data-translate-key]').forEach(el => {
                     const key = el.dataset.translateKey;
                     if (langData[key]) {
-                        if (el.placeholder !== undefined && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA')) {
-                           el.placeholder = langData[key];
-                        } else {
-                           el.textContent = langData[key];
-                        }
+                        if (el.placeholder !== undefined) el.placeholder = langData[key];
+                        else el.textContent = langData[key];
                     }
                 });
                 langButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.lang === lang));
@@ -356,10 +285,10 @@
                     showResult(translations[currentLang].fillAllFields, 'error');
                     return;
                 }
-                
+                const originalButtonText = translations[currentLang].testButton;
                 showResult(translations[currentLang].testingConnection, 'testing');
                 testBtn.disabled = true;
-                testBtn.classList.add('loading');
+                testBtn.textContent = translations[currentLang].checkingButton;
 
                 const formData = {
                     server: serverInput.value.trim(), security: securitySelect.value, port: portInput.value.trim(),
@@ -372,7 +301,7 @@
                         method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(formData),
                     });
                     const result = await response.json();
-                    if (response.ok) {
+                    if (response.ok) { // Check if response status is 2xx
                         showResult(result.message, 'success');
                     } else {
                         showResult(translations[currentLang].errorMessage.replace('{error}', result.message), 'error');
@@ -382,9 +311,10 @@
                 }
 
                 testBtn.disabled = false;
-                testBtn.classList.remove('loading');
+                testBtn.textContent = originalButtonText;
             }
 
+            // --- Inicialização e Event Listeners ---
             if (currentYearSpan) currentYearSpan.textContent = new Date().getFullYear();
             const savedLang = localStorage.getItem('preferredLanguage') || navigator.language.split('-')[0];
             setLanguage(savedLang);
@@ -394,15 +324,6 @@
             langButtons.forEach(btn => btn.addEventListener('click', () => setLanguage(btn.dataset.lang)));
             sendEmailCheckbox.addEventListener('change', toggleDestinationEmail);
             securitySelect.addEventListener('change', updatePortBasedOnSecurity);
-
-            btnCustom.addEventListener('click', () => {
-                serverInput.value = '';
-                portInput.value = '';
-                emailInput.value = '';
-                passwordInput.value = '';
-                serverInput.focus();
-            });
-
             btnGoogle.addEventListener('click', () => {
                 serverInput.value = 'smtp.gmail.com'; securitySelect.value = 'starttls'; updatePortBasedOnSecurity();
             });
